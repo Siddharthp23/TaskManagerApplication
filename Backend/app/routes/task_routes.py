@@ -33,3 +33,7 @@ async def update_task(task_id: str):
 async def delete_task(task_id: str):
     await collection.delete_one({"_id": ObjectId(task_id)})
     return {"message": "Task deleted"}
+
+@router.get("/health")
+async def health():
+    return {"status": "ok"}
