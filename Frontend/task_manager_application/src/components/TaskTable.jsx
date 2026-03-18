@@ -2,52 +2,47 @@ import { updateTask, deleteTask } from "../api";
 
 export default function TaskTable({ tasks, refresh }) {
   return (
-    <table style={styles.table}>
+    <table style={{ width: "100%" }}>
       <thead>
         <tr>
-          <th style={styles.th}>Title</th>
-          <th style={styles.th}>Description</th>
-          <th style={styles.th}>Status</th>
-          <th style={styles.th}>Actions</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Actions</th>
         </tr>
       </thead>
 
       <tbody>
         {tasks.map((task) => (
-          <tr key={task._id} style={styles.row}>
-            <td style={styles.td}>{task.title}</td>
-            <td style={styles.td}>{task.description}</td>
+          <tr key={task._id}>
+            <td>{task.title}</td>
+            <td>{task.description}</td>
 
-            <td style={styles.td}>
-              <span
-                style={{
-                  color: task.status === "completed" ? "green" : "orange",
-                  fontWeight: "bold",
-                }}
-              >
+            <td>
+              <span style={{
+                color: task.status === "completed" ? "green" : "orange"
+              }}>
                 {task.status}
               </span>
             </td>
 
-            <td style={styles.td}>
+            <td>
               <button
-                style={styles.completeBtn}
-                onClick={() => {
-                  updateTask(task._id);
+                onClick={async () => {
+                  await updateTask(task._id);
                   refresh();
                 }}
               >
-                ✔
+                Complete
               </button>
 
               <button
-                style={styles.deleteBtn}
-                onClick={() => {
-                  deleteTask(task._id);
+                onClick={async () => {
+                  await deleteTask(task._id);
                   refresh();
                 }}
               >
-                ✖
+                Delete
               </button>
             </td>
           </tr>
