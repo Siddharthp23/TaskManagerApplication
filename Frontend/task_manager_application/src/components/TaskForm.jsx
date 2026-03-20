@@ -7,9 +7,18 @@ export default function TaskForm({ refresh }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title.trim()) return;
 
-    await createTask({ title, description });
+    if (!title.trim() || !description.trim()) {
+      alert("All fields are required");
+      return;
+    }
+
+    await createTask({
+      title,
+      description,
+      status: "pending",
+    });
+
     setTitle("");
     setDescription("");
     refresh();

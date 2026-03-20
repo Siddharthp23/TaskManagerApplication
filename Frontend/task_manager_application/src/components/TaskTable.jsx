@@ -1,6 +1,37 @@
+import { useState } from "react";
 import { updateTask, deleteTask } from "../api";
 
 export default function TaskTable({ tasks, refresh }) {
+  const [editingId, setEditingId] = useState(null);
+  const [editData, setEditData] = useState({
+    title: "",
+    description: "",
+  });
+
+  const startEdit = (task) => {
+    setEditingId(task._id);
+    setEditData({
+      title: task.title,
+      description: task.description,
+    });
+  };
+
+  const handleUpdate = async (task) => {
+    if (!editData.title.trim() || !editData.description.trim()) {
+      alert("All fields are required");
+      return;
+    }
+
+    await updateTask(task._id, {
+      title: editData.title,
+      description: editData.description,
+      status: task.status,
+    });
+
+    setEditingId(null);
+    refresh();
+  };
+
   return (
     <table style={styles.table}>
       <thead>
@@ -15,9 +46,40 @@ export default function TaskTable({ tasks, refresh }) {
       <tbody>
         {tasks.map((task) => (
           <tr key={task._id} style={styles.row}>
-            <td style={styles.td}>{task.title}</td>
-            <td style={styles.td}>{task.description}</td>
+            {/* Title */}
+            <td style={styles.td}>
+              {editingId === task._id ? (
+                <input
+                  style={styles.input}
+                  value={editData.title}
+                  onChange={(e) =>
+                    setEditData({ ...editData, title: e.target.value })
+                  }
+                />
+              ) : (
+                task.title
+              )}
+            </td>
 
+            {/* Description */}
+            <td style={styles.td}>
+              {editingId === task._id ? (
+                <input
+                  style={styles.input}
+                  value={editData.description}
+                  onChange={(e) =>
+                    setEditData({
+                      ...editData,
+                      description: e.target.value,
+                    })
+                  }
+                />
+              ) : (
+                task.description
+              )}
+            </td>
+
+            {/* Status */}
             <td style={styles.td}>
               <span
                 style={{
@@ -36,8 +98,9 @@ export default function TaskTable({ tasks, refresh }) {
               </span>
             </td>
 
+            {/* Actions */}
             <td style={styles.td}>
-              {/* Toggle Switch */}
+              {/* Toggle */}
               <div
                 style={{
                   ...styles.toggle,
@@ -48,6 +111,8 @@ export default function TaskTable({ tasks, refresh }) {
                 }}
                 onClick={async () => {
                   await updateTask(task._id, {
+                    title: task.title,
+                    description: task.description,
                     status:
                       task.status === "completed"
                         ? "pending"
@@ -67,6 +132,24 @@ export default function TaskTable({ tasks, refresh }) {
                 />
               </div>
 
+              {/* Update / Save Button */}
+              {editingId === task._id ? (
+                <button
+                  style={styles.saveBtn}
+                  onClick={() => handleUpdate(task)}
+                >
+                  Save
+                </button>
+              ) : (
+                <button
+                  style={styles.updateBtn}
+                  onClick={() => startEdit(task)}
+                >
+                  Update
+                </button>
+              )}
+
+              {/* Delete */}
               <button
                 style={styles.deleteBtn}
                 onClick={async () => {
@@ -123,7 +206,13 @@ const styles = {
     textTransform: "capitalize",
   },
 
-  /* Toggle styles */
+  input: {
+    width: "100%",
+    padding: "6px",
+    border: "1px solid #ddd",
+    borderRadius: "4px",
+  },
+
   toggle: {
     width: "44px",
     height: "24px",
@@ -143,6 +232,28 @@ const styles = {
     transition: "transform 0.3s ease",
   },
 
+  updateBtn: {
+    marginRight: "8px",
+    padding: "6px 10px",
+    fontSize: "12px",
+    background: "#e0f2fe",
+    color: "#0369a1",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+  },
+
+  saveBtn: {
+    marginRight: "8px",
+    padding: "6px 10px",
+    fontSize: "12px",
+    background: "#dcfce7",
+    color: "#166534",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+  },
+
   deleteBtn: {
     padding: "6px 12px",
     fontSize: "12px",
@@ -151,6 +262,5 @@ const styles = {
     border: "none",
     borderRadius: "6px",
     cursor: "pointer",
-    transition: "0.2s",
   },
 };

@@ -13,9 +13,11 @@ export const createTask = async (task) => {
   });
 };
 
-export const updateTask = async (id) => {
+export const updateTask = async (id, updatedTask) => {
   await fetch(`${BASE_URL}/tasks/${id}`, {
     method: "PUT",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(updatedTask),
   });
 };
 
