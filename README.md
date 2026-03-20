@@ -77,7 +77,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Create a `.env` file:
+Create a  `.env` file:
 
 ```id="0n7ch3"
 MONGO_URL=mongodb://localhost:27017
