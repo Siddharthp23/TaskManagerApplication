@@ -37,15 +37,35 @@ export default function TaskTable({ tasks, refresh }) {
             </td>
 
             <td style={styles.td}>
-              <button
-                style={styles.completeBtn}
+              {/* Toggle Switch */}
+              <div
+                style={{
+                  ...styles.toggle,
+                  background:
+                    task.status === "completed"
+                      ? "#3b82f6"
+                      : "#d1d5db",
+                }}
                 onClick={async () => {
-                  await updateTask(task._id);
+                  await updateTask(task._id, {
+                    status:
+                      task.status === "completed"
+                        ? "pending"
+                        : "completed",
+                  });
                   refresh();
                 }}
               >
-                Complete
-              </button>
+                <div
+                  style={{
+                    ...styles.toggleCircle,
+                    transform:
+                      task.status === "completed"
+                        ? "translateX(22px)"
+                        : "translateX(2px)",
+                  }}
+                />
+              </div>
 
               <button
                 style={styles.deleteBtn}
@@ -103,16 +123,24 @@ const styles = {
     textTransform: "capitalize",
   },
 
-  completeBtn: {
-    marginRight: "8px",
-    padding: "6px 12px",
-    fontSize: "12px",
-    background: "#f1f5f9",
-    color: "#2563eb",
-    border: "none",
-    borderRadius: "6px",
+  /* Toggle styles */
+  toggle: {
+    width: "44px",
+    height: "24px",
+    borderRadius: "999px",
+    display: "inline-flex",
+    alignItems: "center",
     cursor: "pointer",
-    transition: "0.2s",
+    marginRight: "8px",
+    transition: "background 0.3s ease",
+  },
+
+  toggleCircle: {
+    width: "18px",
+    height: "18px",
+    borderRadius: "50%",
+    background: "#ffffff",
+    transition: "transform 0.3s ease",
   },
 
   deleteBtn: {
